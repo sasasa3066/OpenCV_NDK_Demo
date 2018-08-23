@@ -25,14 +25,6 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp )
 add_library( # Sets the name of the library.
-             testMessage
-
-             # Sets the library as a shared library.
-             SHARED
-
-             # Provides a relative path to your source file(s).
-             src/main/cpp/testMessage.cpp )
-add_library( # Sets the name of the library.
              testOpenCv
 
              # Sets the library as a shared library.
@@ -62,7 +54,6 @@ target_link_libraries( # Specifies the target library.
                        testOpenCv
                        libopencv_java3
                        native-lib
-                       testMessage
                        # Links the target library to the log library
                        # included in the NDK.
                        ${log-lib} )
