@@ -14,15 +14,12 @@ extern "C"
 
 JNIEXPORT jintArray JNICALL Java_com_example_asus_demondk_MainActivity_gray(
         JNIEnv *env, jclass obj, jintArray buf, int w, int h) {
-
     jint *cbuf;
     cbuf = env->GetIntArrayElements(buf, JNI_FALSE );
     if (cbuf == NULL) {
         return 0;
     }
-
     Mat imgData(h, w, CV_8UC4, (unsigned char *) cbuf);
-
     uchar* ptr = imgData.ptr(0);
     for(int i = 0; i < w*h; i ++){
         //计算公式：Y(亮度) = 0.299*R + 0.587*G + 0.114*B

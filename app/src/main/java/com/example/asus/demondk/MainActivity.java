@@ -7,11 +7,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.opencv.android.OpenCVLoader;
 
 public class MainActivity extends AppCompatActivity {
 
     // Used to load the 'native-lib' library on application startup.
     static {
+        System.loadLibrary("opencv_java3");
         System.loadLibrary("native-lib");
         System.loadLibrary("testMessage");
         System.loadLibrary("testOpenCv");
@@ -23,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Example of a call to a native method
-        ImageView preImg=(ImageView)findViewById(R.id.img1);
+        /*ImageView preImg=(ImageView)findViewById(R.id.img1);
         ImageView pastImg=(ImageView)findViewById(R.id.img2);
         Bitmap bitmap= BitmapFactory.decodeResource(getResources(),R.drawable.test11);
         int w = bitmap.getWidth(), h = bitmap.getHeight();
@@ -33,8 +37,12 @@ public class MainActivity extends AppCompatActivity {
         Bitmap result = Bitmap.createBitmap(w,h, Bitmap.Config.RGB_565);
         result.setPixels(resultPixes, 0, w, 0, 0,w, h);
         preImg.setImageBitmap(bitmap);
-        pastImg.setImageBitmap(result);
-        //
+        pastImg.setImageBitmap(result);*/
+        if(OpenCVLoader.initDebug()){
+            Toast.makeText(getApplicationContext(),"load",Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(getApplicationContext(),"fail",Toast.LENGTH_LONG).show();
+        }
     }
 
     /**
