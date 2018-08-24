@@ -19,9 +19,9 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     static {
         System.loadLibrary("opencv_java3");// Need load the lib if you did't install opencv manager.apk
         System.loadLibrary("native-lib");
-        System.loadLibrary("testOpenCv");
     }
-    private JavaCameraView javaCameraView;
+    private static JavaCameraView javaCameraView;
+    private static Mat cameraFrame;
     private BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -76,13 +76,15 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        return inputFrame.rgba();
+        cameraFrame=inputFrame.rgba();
+        long matAddress=cameraFrame.getNativeObjAddr();
+        imageProcessing(matAddress);
+        return cameraFrame;
     }
 
     /**
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public native String stringFromJNI();
-    public static native int[] gray(int[] buf, int w, int h);
+    public native void imageProcessing(long matAddress);
 }
