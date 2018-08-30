@@ -77,8 +77,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         cameraFrame=inputFrame.rgba();
-        long matAddress=cameraFrame.getNativeObjAddr();
-        imageProcessing(matAddress);
+        imageProcessing(cameraFrame.getNativeObjAddr());
         return cameraFrame;
     }
 
