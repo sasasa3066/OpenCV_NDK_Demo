@@ -4,13 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.asus.demondk.MainActivity">
+    tools:context="com.example.asus.demondk.MainActivity"
+    tools:layout_editor_absoluteY="81dp">
 
     <org.opencv.android.JavaCameraView
         android:id="@+id/javaCameraView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="315dp"
         app:camera_id="back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:show_fps="true" />
 
 </android.support.constraint.ConstraintLayout>

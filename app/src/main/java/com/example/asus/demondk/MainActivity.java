@@ -1,9 +1,13 @@
 package com.example.asus.demondk;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -11,7 +15,10 @@ import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+
+import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
@@ -22,6 +29,10 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     }
     private static JavaCameraView javaCameraView;
     private static Mat cameraFrame;
+
+
+    Mat detectMat = new Mat();
+    Bitmap footbm;
     private BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -46,6 +57,13 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         javaCameraView = (JavaCameraView) findViewById(R.id.javaCameraView);
         javaCameraView.setVisibility(SurfaceView.VISIBLE);
         javaCameraView.setCvCameraViewListener(this);
+        /*getDetectImg();
+        imageProcessing(detectMat.getNativeObjAddr());
+        ImageView img=findViewById(R.id.imageView);
+        Utils.matToBitmap(detectMat, footbm);
+        img.setImageBitmap( footbm );
+        img.invalidate();
+        img.setVisibility(View.VISIBLE);*/
     }
     @Override
     public void onPause() {
@@ -78,7 +96,15 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         cameraFrame=inputFrame.rgba();
         imageProcessing(cameraFrame.getNativeObjAddr());
+        //imageDetect(cameraFrame.getNativeObjAddr(),detectMat.getNativeObjAddr());
         return cameraFrame;
+    }
+    public void getDetectImg(){
+        // read image from resource
+        InputStream is = this.getResources().openRawResource(R.raw.adata);
+        footbm = BitmapFactory.decodeStream(is);
+        //convert bitmap to opencv Mat
+        Utils.bitmapToMat(footbm, detectMat);
     }
 
     /**
