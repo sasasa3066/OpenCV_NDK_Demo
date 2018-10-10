@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
@@ -36,8 +35,8 @@ import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     Button scanButton;
     Button disconveryButton;
     TextView textView;
+    TextView texP;
     //BlueTooth
     private static BluetoothAdapter bluetoothAdapter;
     private static BluetoothDevice device;
@@ -73,6 +73,10 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     Handler handler;
     private static final int REQUEST_CODE_ACCESS_COARSE_LOCATION = 1;//------------------------------------------------------------
     int i=0;
+    boolean isconnected=false;
+    int px=0;
+    int py=0;
+    static Point point;
     //private static ArrayList<BluetoothDevice> deviceArrayList;
 
     private static JavaCameraView javaCameraView;
@@ -163,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         btn=(Button)findViewById(R.id.btn_send);
         btn.setOnClickListener(send);
         textView=(TextView)findViewById(R.id.tex1);
+        texP=(TextView)findViewById(R.id.tex2);
         handler=new Handler(){
             @Override
             public void handleMessage(Message msg) {
@@ -178,7 +183,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                     //textView.setText(readMessage+i++);
                     x = readBuffer [0] & 0xFF;//直接使用別人的有時間再研究......................................
                     textView.setText("前方超音波距離:"+x);//這邊一定要有String不能單純只有數字
-                    sendInstruction(x);
+                    texP.setText("X"+px+",Y"+py);
+                    sendInstruction(x);//x是距離
                 }
             }
         };
@@ -346,21 +352,18 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         cameraFrame=inputFrame.rgba();
-        imageProcessing(cameraFrame.getNativeObjAddr());
+        int[] arr;
+        arr=imageProcessing(cameraFrame.getNativeObjAddr());
         //imageDetect(cameraFrame.getNativeObjAddr(),detectMat.getNativeObjAddr());
+        px=arr[0];
+        py=arr[1];
+        Log.e("..................................",px+","+py);
         return cameraFrame;
-    }
-    public void getDetectImg(){
-        // read image from resource
-        InputStream is = this.getResources().openRawResource(R.raw.adata);
-        footbm = BitmapFactory.decodeStream(is);
-        //convert bitmap to opencv Mat
-        Utils.bitmapToMat(footbm, detectMat);
     }
 
     /**
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public native void imageProcessing(long matAddress);
+    public native int[] imageProcessing(long matAddress);
 }
