@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                     //textView.setText(readMessage+i++);
                     x = readBuffer [0] & 0xFF;//直接使用別人的有時間再研究......................................
                     textView.setText("前方超音波距離:"+x);//這邊一定要有String不能單純只有數字
-                    texP.setText("X"+px+",Y"+py);
+                    Log.i("dddddddddddddddddddistance",":"+x);
                     sendInstruction(x);//x是距離
                 }
             }
@@ -191,26 +191,26 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     }
 
     public void sendInstruction(int distance){
-        if(distance>10){
-            try{
-                //outputStream = socket.getOutputStream();
-
-                // 送出訊息
-                String message ="f";
-                outputStream.write(message.getBytes());
-            }catch(IOException e){
-
+        try{
+            //outputStream = socket.getOutputStream();
+            String message=null;
+            if(distance<5){
+                message="b";
+            }else if(distance>=5 && distance<8){
+                message="s";
+            }else{//distance>=8
+                //px,py
+                if(px<200){//左轉
+                    message="l";
+                }else if(px>500){//右轉
+                    message="d";
+                }else{//前進
+                    message="f";
+                }
             }
-        }else{
-            try{
-                //outputStream = socket.getOutputStream();
+            outputStream.write(message.getBytes());
+        }catch(IOException e){
 
-                // 送出訊息
-                String message ="b";
-                outputStream.write(message.getBytes());
-            }catch(IOException e){
-
-            }
         }
     }
 

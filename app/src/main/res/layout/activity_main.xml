@@ -28,14 +28,13 @@
         android:text="BTScan"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_send"
-        app:layout_constraintTop_toBottomOf="@+id/tex1" />
+        app:layout_constraintStart_toEndOf="@+id/btn_send" />
 
     <Button
         android:id="@+id/btn_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="25dp"
         android:background="#80FFFFFF"
         android:text="BTStart"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -58,28 +57,26 @@
 
     <TextView
         android:id="@+id/tex1"
-        android:layout_width="0dp"
+        android:layout_width="144dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="18dp"
-        android:layout_marginEnd="44dp"
-        android:layout_marginTop="378dp"
+        android:layout_marginTop="393dp"
+
         android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/btn_scan"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toTopOf="@+id/btn_send"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tex2"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tex2"
-        android:layout_width="0dp"
+        android:layout_width="144dp"
         android:layout_height="0dp"
         android:layout_marginBottom="21dp"
-        android:layout_marginEnd="36dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="378dp"
+        android:layout_marginTop="372dp"
         android:text="TextView"
         app:layout_constraintBottom_toTopOf="@+id/btn_send"
-        app:layout_constraintEnd_toStartOf="@+id/tex1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

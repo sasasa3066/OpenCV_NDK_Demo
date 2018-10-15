@@ -55,8 +55,6 @@ JNIEXPORT jintArray JNICALL Java_com_example_asus_demondk_MainActivity_imageProc
     //findCycle(src,cpy);
     jintArray jarr = env->NewIntArray(2);
     jint *arr = env->GetIntArrayElements(jarr, NULL);
-    arr[0]=5;
-    arr[1]=10;
     contour(src,cpy,arr[0],arr[1]);
     env->ReleaseIntArrayElements(jarr, arr, 0);
     return jarr;
