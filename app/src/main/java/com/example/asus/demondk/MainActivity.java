@@ -72,10 +72,9 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private final static int MESSAGE_READ = 2;
     Handler handler;
     private static final int REQUEST_CODE_ACCESS_COARSE_LOCATION = 1;//------------------------------------------------------------
-    int i=0;
-    boolean isconnected=false;
-    int px=0;
-    int py=0;
+    int pointX=0;
+    int pointY=0;
+    int predistance=0;
     static Point point;
     //private static ArrayList<BluetoothDevice> deviceArrayList;
 
@@ -174,17 +173,17 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 super.handleMessage(msg);
                 if(msg.what == MESSAGE_READ){
                     String readMessage = null;
-                    int x=0;
+                    int distance=0;
                     try {
                         readMessage = new String((byte[]) msg.obj, "ASCII");
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
                     //textView.setText(readMessage+i++);
-                    x = readBuffer [0] & 0xFF;//直接使用別人的有時間再研究......................................
-                    textView.setText("前方超音波距離:"+x);//這邊一定要有String不能單純只有數字
-                    Log.i("dddddddddddddddddddistance",":"+x);
-                    sendInstruction(x);//x是距離
+                    distance = readBuffer [0] & 0xFF;//直接使用別人的有時間再研究......................................
+
+                    textView.setText("前方超音波距離:"+distance);//這邊一定要有String不能單純只有數字
+                    sendInstruction(distance);//x是距離
                 }
             }
         };
@@ -194,15 +193,18 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         try{
             //outputStream = socket.getOutputStream();
             String message=null;
-            if(distance<5){
+            Log.i("information",":distance"+distance+",x:"+pointX);
+            if(distance<5){//後退
                 message="b";
-            }else if(distance>=5 && distance<8){
+            }else if((distance>=5 && distance<11) || (pointX==0 && pointY==0)){//停止
                 message="s";
             }else{//distance>=8
                 //px,py
-                if(px<200){//左轉
+                if(pointX<230){//左轉
+
+
                     message="l";
-                }else if(px>500){//右轉
+                }else if(pointX>570){//右轉
                     message="d";
                 }else{//前進
                     message="f";
@@ -355,9 +357,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         int[] arr;
         arr=imageProcessing(cameraFrame.getNativeObjAddr());
         //imageDetect(cameraFrame.getNativeObjAddr(),detectMat.getNativeObjAddr());
-        px=arr[0];
-        py=arr[1];
-        Log.e("..................................",px+","+py);
+        pointX=arr[0];
+        pointY=arr[1];
         return cameraFrame;
     }
 
