@@ -1,7 +1,7 @@
 #include <jni.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
-
+#include <stdio.h>
 using namespace cv;
 using namespace std;
 
@@ -102,7 +102,7 @@ void contour(Mat &src,Mat &cpy,int &x,int &y){
     vector<vector<Point>> contours;
     vector<Vec4i> hierarchy;
     findContours(src, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
-    double maxArea=0;
+    double maxArea=500;//給定一個初始值，如果小於這個數值將不列入
     double area=0;
     int index=0;
     Rect rect;
@@ -117,6 +117,9 @@ void contour(Mat &src,Mat &cpy,int &x,int &y){
     rectangle(cpy, rect,  Scalar(0,255,0),2, 8,0);
     x=rect.x+(rect.width/2);
     y=rect.y+(rect.height/2);
+    char str[6];
+    sprintf(str,"%.0lf",maxArea);
+    putText(cpy,str,Point(100,100), 0, 1, Scalar(0,0,0),3);
     /*try{//******************************************************************
         vector<Moments> mu(1);
         if(contours.size()!=NULL){
@@ -130,8 +133,8 @@ void contour(Mat &src,Mat &cpy,int &x,int &y){
     }catch(...){
 
     }*/
-    drawContours(cpy, contours, index, Scalar(0,255,0), 2, 8, hierarchy);
-    putText(cpy,"X",Point(x,y), 0, 1, Scalar(0,0,0),3);
+    //drawContours(cpy, contours, index, Scalar(0,255,0), 2, 8, hierarchy);
+    putText(cpy,".",Point(x,y), 0, 1, Scalar(0,0,0),3);
     //putText(cpy, string("X"),Point(280,280), 0, 1, Scalar(0,0,0),3);
     src=cpy;
 
@@ -140,8 +143,9 @@ void colorfilter(Mat &src){
     Mat hsvMat;
     cvtColor(src,hsvMat,COLOR_BGR2HSV);
     //src = Mat(hsvMat.rows, hsvMat.cols,CV_8U);
-    Scalar hsv_min = Scalar(24,100,100, 0);
-    Scalar hsv_max = Scalar(44,255,255, 0);
+    //範圍參考URL:https://blog.csdn.net/Taily_Duan/article/details/51506776
+    Scalar hsv_min = Scalar(35,43,64, 0);
+    Scalar hsv_max = Scalar(77,255,255, 0);
     inRange(hsvMat,hsv_min,hsv_max,src);
 }
 void findCycle(Mat &src,Mat &cpy){

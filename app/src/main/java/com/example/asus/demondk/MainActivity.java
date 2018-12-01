@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             startActivityForResult(intent, REQUEST_ENABLE_BT);
         }
         Set<BluetoothDevice> devices=bluetoothAdapter.getBondedDevices();
-        String tempS="";
+        /*String tempS="";//************************先移除暫時不用********************************************************************
         for(BluetoothDevice tempDevice:devices){
             tempS+=tempDevice.getAddress()+"  "+tempDevice.getName()+"\n";
         }
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             public void onClick(DialogInterface dialogInterface, int i) {
             }
         });
-        dialog.show();
+        dialog.show();*/
         disconveryButton=(Button) findViewById(R.id.btn_discovery);
         disconveryButton.setOnClickListener(discoveryButtonListener);
         //-------------------------------------------------------------------------------------------copy past follw-------------------------------------------------------------------------------------------------
@@ -193,10 +193,9 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         try{
             //outputStream = socket.getOutputStream();
             String message=null;
-            Log.i("information",":distance"+distance+",x:"+pointX);
-            if(distance<5){//後退
+            if(distance<3 && distance!=0){//後退
                 message="b";
-            }else if((distance>=5 && distance<11) || (pointX==0 && pointY==0)){//停止
+            }else if((distance>=3 && distance<15) || (pointX==0 && pointY==0) || (distance==0)){//停止
                 message="s";
             }else{//distance>=8
                 //px,py
@@ -210,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                     message="f";
                 }
             }
+            Log.i("information",":distance"+distance+",x:"+pointX+message);
             outputStream.write(message.getBytes());
         }catch(IOException e){
 
@@ -236,46 +236,48 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                     if (BluetoothDevice.ACTION_FOUND.equals(intent.getAction())) {
                         device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                         dialog.setMessage(device.getAddress()+"  "+device.getName());
-                        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        });
-                        dialog.show();
-                        try{
-                            bluetoothAdapter.cancelDiscovery();//取消搜尋
-                            socket=device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
-                            socket.connect();//連接上去
-                            outputStream = socket.getOutputStream();
-                            inputStream=socket.getInputStream();
-
-                            readBufferPosition = 0;
-                            workerThread=new Thread(new Runnable() {
+                        if(device.getName().equals("KHBT9336")){
+                            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
-                                public void run() {//---------------------------------------------------開啟接收訊息的Thread---------------------------------------------------------------
-                                    while(true){
-                                        try{
-                                            readBufferPosition = inputStream.available();
-                                            if(readBufferPosition != 0) {
-                                                readBuffer = new byte[1024];
-                                                SystemClock.sleep(100); //pause and wait for rest of data. Adjust this depending on your sending speed.
-                                                readBufferPosition = inputStream.available(); // how many bytes are ready to be read?
-                                                readBufferPosition = inputStream.read(readBuffer, 0, readBufferPosition); // record how many bytes we actually read
-                                                handler.obtainMessage(MESSAGE_READ, readBufferPosition, -1, readBuffer)
-                                                        .sendToTarget(); // Send the obtained bytes to the UI activity
-                                            }
+                                public void onClick(DialogInterface dialogInterface, int i) {
 
-                                        }catch(IOException e){
-                                            Log.e("while break ",":"+e);
-                                            break;
-                                        }
-                                    }
                                 }
                             });
-                            workerThread.start();
-                        }catch (IOException e){
-                            Log.e("getInputStream is error",":"+e);
+                            dialog.show();
+                            try{
+                                bluetoothAdapter.cancelDiscovery();//取消搜尋
+                                socket=device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
+                                socket.connect();//連接上去
+                                outputStream = socket.getOutputStream();
+                                inputStream=socket.getInputStream();
+
+                                readBufferPosition = 0;
+                                workerThread=new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {//---------------------------------------------------開啟接收訊息的Thread---------------------------------------------------------------
+                                        while(true){
+                                            try{
+                                                readBufferPosition = inputStream.available();
+                                                if(readBufferPosition != 0) {
+                                                    readBuffer = new byte[1024];
+                                                    SystemClock.sleep(100); //pause and wait for rest of data. Adjust this depending on your sending speed.
+                                                    readBufferPosition = inputStream.available(); // how many bytes are ready to be read?
+                                                    readBufferPosition = inputStream.read(readBuffer, 0, readBufferPosition); // record how many bytes we actually read
+                                                    handler.obtainMessage(MESSAGE_READ, readBufferPosition, -1, readBuffer)
+                                                            .sendToTarget(); // Send the obtained bytes to the UI activity
+                                                }
+
+                                            }catch(IOException e){
+                                                Log.e("while break ",":"+e);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                });
+                                workerThread.start();
+                            }catch (IOException e){
+                                Log.e("getInputStream is error",":"+e);
+                            }
                         }
                     }
                 }
@@ -359,6 +361,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         //imageDetect(cameraFrame.getNativeObjAddr(),detectMat.getNativeObjAddr());
         pointX=arr[0];
         pointY=arr[1];
+        Log.i("Point",pointX+","+pointY);
         return cameraFrame;
     }
 
